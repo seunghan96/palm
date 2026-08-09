@@ -1,0 +1,9 @@
+# The pipeline writes everything under these. Scored panels reach a few
+# hundred gigabytes if the whole arm grid is run.
+data/
+results/
+figs/
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

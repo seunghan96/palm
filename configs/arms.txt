@@ -1,0 +1,82 @@
+# Every arm the metrics pass reads, one per line:
+#
+#     <name>  <directory under results/big>  <decision date>
+#
+# The name is what the tables and figures refer to. The directory is where that
+# arm's scored panels sit. The decision date is where the evaluation window
+# opens, which only the arms that deliberately move it depart from.
+#
+# An arm listed here but absent from disk is skipped, so this file can carry
+# the whole grid while only part of it has been run.
+
+# the unadapted checkpoint, the "-" row of every table
+base        base            2021.0
+
+# PALM at the reported setting, and the capacity curve around it
+r2          palm_r2         2021.0
+r1          palm_r1         2021.0
+rank3       palm_r3         2021.0
+r4          palm_r4         2021.0
+rank6       palm_r6         2021.0
+r8          palm_r8         2021.0
+rank12      palm_r12        2021.0
+r16         palm_r16        2021.0
+rank24      palm_r24        2021.0
+rank32      palm_r32        2021.0
+
+# training budget
+steps100    steps100        2021.0
+steps200    steps200        2021.0
+steps300    steps300        2021.0
+steps900    steps900        2021.0
+steps1200   steps1200       2021.0
+steps1800   steps1800       2021.0
+steps2400   steps2400       2021.0
+lr5e6       lr5e-6          2021.0
+lr2e5       lr2e-5          2021.0
+lr5e5       lr5e-5          2021.0
+lr2e4       lr2e-4          2021.0
+lr3e4       lr3e-4          2021.0
+
+# how much of the eligible corpus the adapter reads
+frac2       frac0.02        2021.0
+frac5       frac0.05        2021.0
+frac10      frac0.1         2021.0
+frac25      frac0.25        2021.0
+frac50      frac0.5         2021.0
+frac75      frac0.75        2021.0
+
+# how much of each article it reads
+len64       len64           2021.0
+len128      len128          2021.0
+len512      len512          2021.0
+len1024     len1024         2021.0
+
+# which projections carry the update
+attn        attn            2021.0
+mlp         mlp             2021.0
+
+# moving the decision date, which moves the pool with it
+d2017       d2017           2017.0
+d2018       d2018           2018.0
+d2019       d2019           2019.0
+d2020       d2020           2020.0
+d2022       d2022           2022.0
+d2023       d2023           2023.0
+
+# seeds, to separate the effect from the draw
+seed1       seed1           2021.0
+seed2       seed2           2021.0
+seed3       seed3           2021.0
+seed4       seed4           2021.0
+seed5       seed5           2021.0
+seed6       seed6           2021.0
+
+# one pass per calendar year rather than one over the whole window
+incr        incr            2021.0
+
+# the two bounds. Scrambling destroys the text the adapter reads, and the
+# oracle lets it read past the decision date, which breaks eligibility.
+shuf2       shuffled_r2     2021.0
+shuffled    shuffled_r8     2021.0
+oracle      oracle          2021.0
