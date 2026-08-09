@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """All three reported metrics, for every variant, in one pass.
 
-The paper reports an information coefficient, an annualized long-short return
-and a Sharpe ratio, but only the headline table carried all three. There was no
-reason for that beyond table width, so this computes the full set once and
-writes it out, and the tables read it back.
+All three reported measures follow from the same daily series, so this computes
+them once per scored panel and writes them out, and everything downstream reads
+the result back rather than recomputing it.
 
 For a scored panel the three follow from the same daily series. The IC is the
 cross-sectional Spearman correlation with the realized return on each date. The

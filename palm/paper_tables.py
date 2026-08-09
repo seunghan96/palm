@@ -9,7 +9,7 @@ One suite is held out of the pooled numbers. PIT-4B releases its vintages as
 monthly snapshots of a single continuous run rather than as models trained
 separately per cutoff, so a later vintage there has taken more optimizer steps
 as well as read more text. That is a different quantity from the one the rest of
-the paper measures, so it is reported on its own instead."""
+the rest of the pool measures, so it is reported on its own instead."""
 import sys
 import warnings
 warnings.filterwarnings("ignore")

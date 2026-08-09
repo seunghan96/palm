@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Four macro designs for the main figure, so the layout can be chosen by eye.
+"""The figure that carries the two claims: staleness, and the paired update.
 
-The paper makes two claims and they pull a figure in opposite directions. The
-first is a null, that freshness does not predict performance, and a null is
-shown by a flat line with a visible spread. The second is a small positive
-effect that survives pairing, and that is shown by connecting each checkpoint to
-itself. No single panel does both well, so we draw four whole-figure candidates
-and pick one rather than arguing about it in the abstract.
+Panel (a) plots the information coefficient against staleness on one fixed
+evaluation window, so the only quantity varying between points is which
+checkpoint produced the score. Points are demeaned within suite, which is the
+specification the staleness table reports.
 
-Every candidate reads from the same numbers the tables do, so choosing between
-them changes only the presentation."""
+Panel (b) puts the same checkpoints before and after PALM, paired on the days
+both systems scored, so each checkpoint is its own control.
+
+Both panels read the same series the tables do, so the two agree by
+construction rather than by care."""
 import glob, os, re, sys, warnings
 warnings.filterwarnings("ignore")
 import numpy as np
@@ -34,8 +35,7 @@ VIN = ("chrono", "PIT-4B", "datedgpt")
 # its own.
 DROP = ("PIT-4B",)
 
-# one colour per suite, kept identical across every candidate so that a reader
-# comparing the four is comparing layouts and not palettes
+# one colour per suite, so a reader comparing the panels is comparing data
 COL = {"ChronoGPT": "#2c5f9e", "ChronoGPT-Instruct": "#2c7a4b",
        "DatedGPT": "#c0504d", "PIT-4B": "#e8a33d"}
 GREY = "#8c8c8c"
@@ -158,7 +158,7 @@ def save(fig, name):
     print(f"  wrote {name}.pdf" + (f"  ({n} overlaps)" if n else ""))
 
 
-# ---------------------------------------------------------------- candidate A
+# ------------------------------------------------------- the reported figure
 def _boxrect(o):
     """Display rectangle of a legend or of a text with a bbox behind it."""
     return (o.get_bbox_patch().get_window_extent()
@@ -212,7 +212,7 @@ def _headroom(fig, ax, top, bot, lo, hi, pad=6.0):
         ax.set_ylim(y0 - max(need_bot, 0), y1 + max(need_top, 0))
 
 
-def _cand_a(B, pr, k=1.0):
+def _figure(B, pr, k=1.0):
     """The figure at legend scale k, with the pieces the overlap test needs."""
     fig, ax = plt.subplots(1, 2, figsize=(11.2, 3.5))
 
@@ -322,14 +322,14 @@ def _cand_a(B, pr, k=1.0):
     return fig, [slope, la, key, count, marks, suites], pts, segs
 
 
-def cand_a(B, pr):
+def figure(B, pr):
     """Two panels: the null on the left, the paired gain on the right.
 
     The legends are grown by one common factor, as far as they can go before a
     box lands on a plotted checkpoint."""
     best = 1.0
     for k in np.arange(1.0, 2.001, 0.05):
-        fig, boxes, pts, segs = _cand_a(B, pr, k)
+        fig, boxes, pts, segs = _figure(B, pr, k)
         bad = _clash(fig, boxes, pts, segs)
         # only the left panel buys space for its boxes by opening a band, so
         # only there does their size come out of the data's height
@@ -340,170 +340,9 @@ def cand_a(B, pr):
         if bad:
             break
         best = k
-    fig = _cand_a(B, pr, best)[0]
+    fig = _figure(B, pr, best)[0]
     print(f"  legend scale {best:.2f}")
-    save(fig, "cand_a")
-
-
-# ---------------------------------------------------------------- candidate B
-def cand_b(B, pr):
-    """One panel in the plane the decision is actually made in, cost against signal."""
-    fig, a = plt.subplots(figsize=(7.4, 4.0))
-    base_ic = np.mean([r[1] for r in pr])
-    upd_ic = np.mean([r[2] for r in pr])
-    fresh_ic, flo, fhi = ci(B[B.stale <= B.stale.min() + 1].ic.values)
-    stale_ic = B[B.stale >= B.stale.max() - 6].ic.mean()
-
-    # cost in GPU-hours, order of magnitude only. A vintage of this size is a
-    # full pretraining run, the adapter is minutes on one card.
-    pts = [(0.02, base_ic, "Stale Vintage\n(Already Paid For)", GREY, "o"),
-           (0.35, upd_ic, "Light Update\n(Rank 2 Adapter)", "#2c7a4b", "*"),
-           (3000.0, fresh_ic, "Annual Pretraining Run\n(One New Vintage)",
-            "#c0504d", "s")]
-    for x, y, lab, c, mk in pts:
-        a.scatter([x], [y], s=300 if mk == "*" else 130, color=c, marker=mk,
-                  zorder=5, edgecolor="white", linewidth=1.0)
-    a.errorbar([3000.0], [fresh_ic], yerr=[[fresh_ic - flo], [fhi - fresh_ic]],
-               color="#c0504d", capsize=3, lw=1.2, zorder=4)
-    a.annotate("Stale Vintage\n(Already Paid For)", (0.02, base_ic),
-               textcoords="offset points", xytext=(-6, -40), fontsize=9)
-    a.annotate("Light Update\n(Rank 2 Adapter)", (0.35, upd_ic),
-               textcoords="offset points", xytext=(-14, 14), fontsize=9,
-               color="#2c7a4b", fontweight="bold")
-    a.annotate("Annual Pretraining Run\n(One New Vintage)", (3000.0, fresh_ic),
-               textcoords="offset points", xytext=(-138, -56), fontsize=9,
-               color="#c0504d", ha="left")
-    a.add_patch(FancyArrowPatch((0.02, base_ic), (0.35, upd_ic),
-                                arrowstyle="-|>", mutation_scale=13,
-                                color="#2c7a4b", lw=1.6, zorder=3,
-                                connectionstyle="arc3,rad=-0.25"))
-    a.add_patch(FancyArrowPatch((0.02, base_ic), (3000.0, fresh_ic),
-                                arrowstyle="-|>", mutation_scale=13,
-                                color="#c0504d", lw=1.4, ls=(0, (4, 2)),
-                                zorder=3, connectionstyle="arc3,rad=0.18"))
-    a.set_xscale("log")
-    a.set_xlim(5e-3, 4e4)
-    a.set_xlabel("Cost Of The Update (GPU-Hours, Log Scale)")
-    a.set_ylabel("Information Coefficient")
-    a.set_title("What Each Way of Staying Current Buys", fontsize=11, pad=14)
-    a.axhline(base_ic, color=GREY, lw=0.7, ls=":")
-    ys = [base_ic, upd_ic, fresh_ic, flo, fhi]
-    lo, hi = min(ys), max(ys)
-    pad = 0.55 * (hi - lo)
-    a.set_ylim(lo - pad, hi + pad)
-    save(fig, "cand_b")
-
-
-# ---------------------------------------------------------------- candidate C
-def cand_c(B, base, ranks):
-    """Three panels: the design that makes the question answerable, then both
-    claims as intervals against zero."""
-    fig, ax = plt.subplots(1, 3, figsize=(11.2, 3.3),
-                           gridspec_kw={"width_ratios": [1.15, 1.0, 1.0]})
-
-    a = ax[0]
-    a.axvspan(2021, 2024, color="#2c5f9e", alpha=0.10, zorder=0)
-    for i, (lab, cut) in enumerate([("Vintage 2013", 2013), ("Vintage 2016", 2016),
-                                    ("Vintage 2019", 2019)]):
-        y = 2 - i
-        a.plot([2008, cut], [y, y], color=GREY, lw=5, solid_capstyle="butt")
-        a.plot([cut, 2021], [y, y], color="#2c7a4b", lw=5, alpha=0.65,
-               solid_capstyle="butt")
-        a.plot([2021, 2024], [y, y], color="#2c5f9e", lw=5, alpha=0.5,
-               solid_capstyle="butt")
-        a.text(2007.4, y, lab, ha="right", va="center", fontsize=9)
-    a.text(2012.0, 3.02, "Pretraining", fontsize=8.5, color="#4d4d4d", ha="center")
-    a.text(2019.0, 3.02, "Update", fontsize=8.5, color="#2c7a4b", ha="center")
-    a.text(2023.2, 3.02, "Scored", fontsize=8.5, color="#2c5f9e", ha="center")
-    a.set_xlim(2002, 2025.2)
-    a.set_ylim(-0.7, 3.5)
-    a.set_yticks([])
-    a.set_xticks([2008, 2016, 2021])
-    a.set_xlabel("Calendar Year")
-    a.set_title("(a) One Window, Every Vintage", fontsize=10.5)
-    for sp in ("left", "right", "top"):
-        a.spines[sp].set_visible(False)
-
-    b = ax[1]
-    lab, val = [], []
-    for s, g in B.groupby("s"):
-        if len(g) < 3:
-            continue
-        r = smf.ols("ic ~ stale", data=g).fit()
-        lo, hi = r.conf_int().loc["stale"]
-        lab.append(s); val.append((r.params["stale"], lo, hi, COL[s]))
-    r = smf.ols("ic ~ stale + C(s)", data=B).fit()
-    lo, hi = r.conf_int().loc["stale"]
-    lab.append("Pooled"); val.append((r.params["stale"], lo, hi, "black"))
-    for i, (m, lo, hi, c) in enumerate(val):
-        y = len(val) - 1 - i
-        b.plot([lo, hi], [y, y], color=c, lw=1.6)
-        b.scatter([m], [y], s=48, color=c, zorder=3)
-    b.axvline(0, color="#c0504d", lw=1.0, ls="--")
-    b.set_yticks(range(len(val))[::-1])
-    b.set_yticklabels(lab, fontsize=9)
-    b.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
-    b.set_xlabel("Slope Of IC On Staleness (Per Year)")
-    b.set_title("(b) Freshness Buys Nothing", fontsize=10.5)
-
-    c = ax[2]
-    for i, (rk, vals) in enumerate(ranks):
-        m, lo, hi = ci(vals)
-        y = len(ranks) - 1 - i
-        col = "#2c7a4b" if lo > 0 else GREY
-        c.plot([lo, hi], [y, y], color=col, lw=1.6)
-        c.scatter([m], [y], s=48, color=col, zorder=3)
-    c.axvline(0, color="#c0504d", lw=1.0, ls="--")
-    c.set_yticks(range(len(ranks))[::-1])
-    c.set_yticklabels([f"Rank {r}" for r, _ in ranks], fontsize=9)
-    c.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
-    c.set_xlabel("Gain In IC From The Update")
-    c.set_title("(c) A Light Update Does", fontsize=10.5)
-    fig.subplots_adjust(wspace=0.36)
-    save(fig, "cand_c")
-
-
-# ---------------------------------------------------------------- candidate D
-def cand_d(B, pr):
-    """A slopegraph, which is the plot the paired test actually performs."""
-    fig, ax = plt.subplots(1, 2, figsize=(11.2, 3.6),
-                           gridspec_kw={"width_ratios": [1.0, 1.5]})
-
-    a = ax[0]
-    for s, g in B.groupby("s"):
-        gg = g.sort_values("stale")
-        a.plot(gg.stale, gg.ic, color=COL[s], lw=1.3, marker="o", ms=4.5,
-               label=s, alpha=0.9)
-    a.axhline(B.ic.mean(), color=GREY, lw=0.8, ls=":")
-    a.set_xlabel("Staleness (Years)")
-    a.set_ylabel("Information Coefficient")
-    a.set_title("(a) Every Vintage, One Window", fontsize=10.5)
-    a.legend(fontsize=7.6, frameon=False, loc="best")
-
-    b = ax[1]
-    groups = {}
-    for m, lo, hi in pr:
-        groups.setdefault(suite(m), []).append((lo, hi))
-    xs, ticks = [], []
-    x = 0
-    for s in sorted(groups):
-        for lo, hi in groups[s]:
-            b.plot([x, x + 0.62], [lo, hi], color=COL[s], lw=1.2, alpha=0.75,
-                   marker="o", ms=3.4)
-            x += 1.0
-        ticks.append((x - len(groups[s]) / 2.0, s))
-        xs.append(x - 0.2)
-        x += 0.9
-    for xv in xs[:-1]:
-        b.axvline(xv, color="#dddddd", lw=0.8)
-    b.set_xticks([t[0] for t in ticks])
-    b.set_xticklabels([t[1] for t in ticks], fontsize=8.6)
-    b.set_ylabel("Information Coefficient")
-    b.set_title("(b) Without PALM (Left of Each Pair) versus With PALM (Right)",
-                fontsize=10.5)
-    b.tick_params(axis="x", length=0)
-    fig.subplots_adjust(wspace=0.22)
-    save(fig, "cand_d")
+    save(fig, "staleness_and_palm")
 
 
 if __name__ == "__main__":
@@ -529,8 +368,4 @@ if __name__ == "__main__":
             ranks.append((rk, [h - l for _, l, h in r]))
     print(f"ranks available {[r for r, _ in ranks]}")
 
-    cand_a(B, pr)
-    cand_b(B, pr)
-    if ranks:
-        cand_c(B, base, ranks)
-    cand_d(B, pr)
+    figure(B, pr)

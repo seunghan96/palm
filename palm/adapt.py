@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """Adapt a stale checkpoint on admissible text, instead of pretraining a new one.
 
-Retrieval and in-context labels both failed, and in hindsight both were asking a
-language model to use information it was shown rather than information it has.
-The thing a vintage is missing is not a document, it is the more mundane drift in
-how financial text is written: which tickers exist, which phrases carry weight,
+What a stale vintage is missing is not a document, it is the drift in how
+financial text is written: which tickers exist, which phrases carry weight,
 which companies are being discussed at all.
 
 That is what continued pretraining fixes, and continued pretraining is exactly

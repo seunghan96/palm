@@ -2,8 +2,7 @@
 """
 Vintage-annotator scoring: label FNSPID news with a knowledge-cutoff-controlled LLM.
 
-Design constraints discovered in the checkpoint audit
-(papers/PIT_checkpoint_technical_audit.md):
+Design constraints the released checkpoints impose:
   * PIT-4B has NO KV cache -> free generation is O(n^2). Never generate.
     Instead take ONE forward pass and read first-token probabilities.
   * forward() ignores attention_mask -> RIGHT padding only, never left.
@@ -29,7 +28,7 @@ import torch.nn.functional as F
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import model_loader
 
-# Verbatim reconstruction of the FNSPID prompt (paper Figure 2), few-shot
+# Verbatim reconstruction of the FNSPID rating prompt, few-shot
 # demonstrations included. Dropping them collapses the output distribution onto
 # "1" for weakly instruction-following models -- verified on ChronoGPT-Instruct,
 # which put 77% of the digit mass on "1" without them.

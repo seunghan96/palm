@@ -4,8 +4,8 @@ Build the article-day panel from FNSPID: (date, symbol, text) + forward return.
 
 Time alignment (this is the part that must not cheat)
 -----------------------------------------------------
-FNSPID `Date` carries a real UTC timestamp (verified: "2023-12-16 23:00:00 UTC"),
-contrary to the paper's Figure 3 sample which shows 00:00:00. We exploit it.
+FNSPID `Date` carries a real UTC timestamp, verified on the raw file as
+"2023-12-16 23:00:00 UTC" rather than a bare midnight, so we can use it.
 
 US equity close = 16:00 ET = 20:00 UTC (EDT) / 21:00 UTC (EST). We take the
 CONSERVATIVE cut at 20:00 UTC: an article is only credited to trading day d if

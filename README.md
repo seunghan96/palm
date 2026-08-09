@@ -40,6 +40,8 @@ An **arm** is one experimental condition.
 
 `configs/arms.txt` lists them all.
 
+---
+
 ## Install
 
 ```bash
@@ -55,6 +57,8 @@ else when the scored panels do not fit next to the code:
 ```bash
 export PALM_ROOT=/scratch/palm
 ```
+
+---
 
 ## Reproduce
 
@@ -95,6 +99,8 @@ Add the arm to `configs/arms.txt` and rerun steps 3 and 4 to see it in the
 tables. *Arms listed there but absent from disk are skipped*, so the file can
 carry the full grid while only part of it has been run.
 
+---
+
 ## Layout
 
 ```
@@ -107,7 +113,7 @@ palm/
   rag_score.py      the read-only baselines: retrieval and in-context labels
   metrics.py        scored panels -> results/metrics.csv
   paper_tables.py   metrics.csv -> the LaTeX rows in the paper
-  main_figure.py    staleness, and the paired before/after comparison
+  main_figure.py    staleness, and the paired before and after comparison
   rank_curve.py     the adapter capacity curve
   qual3.py          cumulative gain, and the vocabulary the update moves
 configs/
@@ -115,6 +121,8 @@ configs/
   arms.txt          every arm, its directory, and its decision date
 run/                the six steps above
 ```
+
+---
 
 ## How the evaluation avoids look-ahead
 
@@ -135,6 +143,8 @@ Three rules, **enforced in code rather than by convention**.
   `--fit-to` flag that would break this exists only to measure the ceiling that
   breaking it buys, which the paper reports as a **bound rather than as a
   method**.
+
+---
 
 ## Notes
 

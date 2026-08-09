@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Three qualitative views, for the claims that a four row table cannot show.
 
-The analysis section argues three things that are shapes rather than numbers.
+Two of the claims are shapes rather than numbers.
 The gain accrues through the window instead of arriving in one episode, it does
 not fade as the base checkpoint ages, and it lands on the material a vintage
 could not have read. Each is drawn here.

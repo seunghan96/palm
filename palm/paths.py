@@ -9,7 +9,7 @@ want when the repository sits on a small disk and the scored panels do not.
     data/                one parquet, the article-day panel
     results/big/<arm>/   one parquet per checkpoint, the scores that arm produced
     results/*.csv        the per-checkpoint metrics the tables read
-    figs/                the figures the paper includes
+    figs/                the figures
 """
 import os
 
@@ -27,7 +27,7 @@ FIGS = os.path.join(ROOT, "figs")
 # ticker it names, and the return of the following session.
 PANEL = os.path.join(DATA, "panel.parquet")
 
-# The metrics table the LaTeX emitters read.
+# The per-checkpoint metrics every table and figure reads.
 METRICS = os.path.join(RESULTS, "metrics.csv")
 
 for _d in (DATA, RESULTS, BIG, FIGS):
