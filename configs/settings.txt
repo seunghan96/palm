@@ -1,0 +1,12 @@
+# The adapter setting the paper reports, one line per backbone:
+#
+#     <suite>  <rank>  <steps>  <lr>
+#
+# Each was chosen on the validation window only (palm/select_config.py), by
+# the rule fixed before any validation result existed: the largest pooled IC
+# gain, ties (< 0.05e-3) to the smaller rank, then to fewer steps. Batch size
+# 4, 256 tokens per article, one-cycle schedule, for every suite.
+
+ChronoGPT           4    1200   1e-4
+ChronoGPT-Instruct  1    600    1e-4
+DatedGPT            16   300    1e-4

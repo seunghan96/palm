@@ -1,25 +1,15 @@
 #!/usr/bin/env bash
-# Score every checkpoint without an adapter. This is the "-" arm of every table.
+# Score every eligible checkpoint as released. This is the "Base" row of every
+# table, and the arm every other arm is paired with.
 #
-# One forward pass per article, no sampling, so a checkpoint returns identical
-# scores on identical input. Roughly 20 minutes per checkpoint on one L40S for
-# the 1.5B models and about an hour for PIT-4B.
+# It goes through adapt.py with --no-train rather than through a separate
+# scorer, so that a paired comparison holds the scored articles and their
+# batching fixed. One forward pass per article, no sampling, so a checkpoint
+# returns identical scores on identical input.
 #
-#   bash run/01_score_base.sh            every eligible checkpoint
+#   bash run/01_score_base.sh            the pooled 44
 #   bash run/01_score_base.sh ChronoGPT  one suite only
+#   ALL=1 bash run/01_score_base.sh      also the held-out and ineligible vintages
 set -euo pipefail
 cd "$(dirname "$0")/.."
-: "${PALM_ROOT:=$PWD}"; export PALM_ROOT
-only="${1:-}"
-
-grep -v '^#' configs/checkpoints.txt | grep -v '^$' | while read -r suite model cutoff eligible; do
-  [ -n "$only" ] && [ "$suite" != "$only" ] && continue
-  out="$PALM_ROOT/results/big/base/${model//\//_}.parquet"
-  [ -f "$out" ] && { echo "have  $model"; continue; }
-  echo "score $model"
-  python3 palm/score_news.py \
-    --model "$model" \
-    --panel "$PALM_ROOT/data/panel.parquet" \
-    --head cloze --batch-size 8 \
-    --out "$out"
-done
+ARM=base_test exec bash run/02_adapt.sh "${1:-}"

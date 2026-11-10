@@ -1,88 +1,93 @@
 # Every checkpoint the paper scores, one per line:
 #
-#     <suite>  <hf-model-id>  <cutoff>  <eligible>
+#     <suite>  <hf-model-id>  <cutoff>  <eligible>  <validation>
 #
 # cutoff is the decimal year the vintage stops at, written the way the code
 # wants it: a model trained through the end of 2015 has cutoff 2016.0, because
 # the interval it has read is everything strictly before that instant.
 #
 # eligible marks the vintages the paper reports. The decision date is the end
-# of November 2020, so a vintage is eligible when its cutoff falls on or before
-# that date. The ones cut at the end of 2020 or later have read into the
-# evaluation window and are scored but never reported.
+# of November 2020 (t = 2021.0), so a vintage is eligible when its cutoff falls
+# on or before that date: 21 ChronoGPT, 16 ChronoGPT-Instruct and 7 DatedGPT
+# vintages, the pooled 44. The ones cut at the end of 2020 or later have read
+# into the evaluation window and are scored but never reported.
+#
+# validation marks the 14 vintages the adapter setting was chosen on, with the
+# decision date moved back to the end of November 2017 (t = 2018.0) and a
+# window that ends where the test window begins (run/02_adapt.sh val).
 #
 # PIT-4B is listed but held out of the pooled numbers. Its vintages are monthly
 # snapshots of one continuous run rather than models trained separately per
 # cutoff, so a later snapshot carries more optimizer steps as well as more
-# text. Section 5.2 analyses it on its own.
+# text. The appendix analyses it on its own.
 
-ChronoGPT           manelalab/chrono-gpt-v1-19991231           2000.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20001231           2001.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20011231           2002.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20021231           2003.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20031231           2004.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20041231           2005.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20051231           2006.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20061231           2007.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20071231           2008.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20081231           2009.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20091231           2010.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20101231           2011.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20111231           2012.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20121231           2013.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20131231           2014.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20141231           2015.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20151231           2016.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20161231           2017.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20171231           2018.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20181231           2019.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20191231           2020.0  yes
-ChronoGPT           manelalab/chrono-gpt-v1-20201231           2021.0  no
-ChronoGPT           manelalab/chrono-gpt-v1-20211231           2022.0  no
-ChronoGPT           manelalab/chrono-gpt-v1-20221231           2023.0  no
-ChronoGPT           manelalab/chrono-gpt-v1-20231231           2024.0  no
-ChronoGPT           manelalab/chrono-gpt-v1-20241231           2025.0  no
+ChronoGPT           manelalab/chrono-gpt-v1-19991231           2000.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20001231           2001.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20011231           2002.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20021231           2003.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20031231           2004.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20041231           2005.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20051231           2006.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20061231           2007.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20071231           2008.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20081231           2009.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20091231           2010.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20101231           2011.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20111231           2012.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20121231           2013.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20131231           2014.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20141231           2015.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20151231           2016.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20161231           2017.0  yes       yes
+ChronoGPT           manelalab/chrono-gpt-v1-20171231           2018.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20181231           2019.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20191231           2020.0  yes       no
+ChronoGPT           manelalab/chrono-gpt-v1-20201231           2021.0  no        no
+ChronoGPT           manelalab/chrono-gpt-v1-20211231           2022.0  no        no
+ChronoGPT           manelalab/chrono-gpt-v1-20221231           2023.0  no        no
+ChronoGPT           manelalab/chrono-gpt-v1-20231231           2024.0  no        no
+ChronoGPT           manelalab/chrono-gpt-v1-20241231           2025.0  no        no
 
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20041231  2005.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20051231  2006.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20061231  2007.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20071231  2008.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20081231  2009.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20091231  2010.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20101231  2011.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20111231  2012.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20121231  2013.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20131231  2014.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20141231  2015.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20151231  2016.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20161231  2017.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20171231  2018.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20181231  2019.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20191231  2020.0  yes
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20201231  2021.0  no
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20211231  2022.0  no
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20221231  2023.0  no
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20231231  2024.0  no
-ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20241231  2025.0  no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20041231  2005.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20051231  2006.0  yes       yes
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20061231  2007.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20071231  2008.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20081231  2009.0  yes       yes
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20091231  2010.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20101231  2011.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20111231  2012.0  yes       yes
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20121231  2013.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20131231  2014.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20141231  2015.0  yes       yes
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20151231  2016.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20161231  2017.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20171231  2018.0  yes       yes
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20181231  2019.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20191231  2020.0  yes       no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20201231  2021.0  no        no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20211231  2022.0  no        no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20221231  2023.0  no        no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20231231  2024.0  no        no
+ChronoGPT-Instruct  manelalab/chrono-gpt-instruct-v1-20241231  2025.0  no        no
 
-DatedGPT            datedgpt/datedgpt-2013-base                2014.0  yes
-DatedGPT            datedgpt/datedgpt-2014-base                2015.0  yes
-DatedGPT            datedgpt/datedgpt-2015-base                2016.0  yes
-DatedGPT            datedgpt/datedgpt-2016-base                2017.0  yes
-DatedGPT            datedgpt/datedgpt-2017-base                2018.0  yes
-DatedGPT            datedgpt/datedgpt-2018-base                2019.0  yes
-DatedGPT            datedgpt/datedgpt-2019-base                2020.0  yes
-DatedGPT            datedgpt/datedgpt-2020-base                2021.0  no
-DatedGPT            datedgpt/datedgpt-2021-base                2022.0  no
-DatedGPT            datedgpt/datedgpt-2022-base                2023.0  no
-DatedGPT            datedgpt/datedgpt-2023-base                2024.0  no
-DatedGPT            datedgpt/datedgpt-2024-base                2025.0  no
+DatedGPT            datedgpt/datedgpt-2013-base                2014.0  yes       yes
+DatedGPT            datedgpt/datedgpt-2014-base                2015.0  yes       no
+DatedGPT            datedgpt/datedgpt-2015-base                2016.0  yes       yes
+DatedGPT            datedgpt/datedgpt-2016-base                2017.0  yes       no
+DatedGPT            datedgpt/datedgpt-2017-base                2018.0  yes       yes
+DatedGPT            datedgpt/datedgpt-2018-base                2019.0  yes       no
+DatedGPT            datedgpt/datedgpt-2019-base                2020.0  yes       no
+DatedGPT            datedgpt/datedgpt-2020-base                2021.0  no        no
+DatedGPT            datedgpt/datedgpt-2021-base                2022.0  no        no
+DatedGPT            datedgpt/datedgpt-2022-base                2023.0  no        no
+DatedGPT            datedgpt/datedgpt-2023-base                2024.0  no        no
+DatedGPT            datedgpt/datedgpt-2024-base                2025.0  no        no
 
-PIT-4B              Diamegs/PIT-4B-201312                      2014.0  held-out
-PIT-4B              Diamegs/PIT-4B-201412                      2015.0  held-out
-PIT-4B              Diamegs/PIT-4B-201511                      2015.9  held-out
-PIT-4B              Diamegs/PIT-4B-201612                      2017.0  held-out
-PIT-4B              Diamegs/PIT-4B-201712                      2018.0  held-out
-PIT-4B              Diamegs/PIT-4B-201812                      2019.0  held-out
-PIT-4B              Diamegs/PIT-4B-201912                      2020.0  held-out
-PIT-4B              Diamegs/PIT-4B-202012                      2021.0  held-out
+PIT-4B              Diamegs/PIT-4B-201312                      2014.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-201412                      2015.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-201511                      2015.9  held-out  no
+PIT-4B              Diamegs/PIT-4B-201612                      2017.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-201712                      2018.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-201812                      2019.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-201912                      2020.0  held-out  no
+PIT-4B              Diamegs/PIT-4B-202012                      2021.0  held-out  no

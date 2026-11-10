@@ -1,6 +1,8 @@
 # The pipeline writes everything under these. Scored panels reach a few
-# hundred gigabytes if the whole arm grid is run.
-data/
+# hundred gigabytes if the whole arm grid is run. The one file kept is the
+# list of article-days the paper scores, which restore_panel.py reads.
+data/*
+!data/panel_ids.parquet
 results/
 figs/
 
