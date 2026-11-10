@@ -9,7 +9,13 @@
 Point-in-time language models are pretrained only on text published before a documented cutoff, one checkpoint per year, so that a backtest never uses a model that has seen its own future. Every added year costs another pretraining run. **PALM** asks whether that run is necessary, and answers with a rank-1 to rank-16 adapter fitted on financial text the checkpoint is allowed to read, with every pretrained weight frozen.
 
 <p align="center">
-  <img src="assets/ws_main.png" width="92%" alt="PALM improves 41 of 44 checkpoints; the IC of the released checkpoints shows no detectable decay with staleness">
+  <img src="assets/concept.png" width="62%" alt="A naive LLM has read the evaluation period; a PIT suite avoids this with one pretraining run per year; PALM needs one model and one small adapter per year">
+</p>
+
+**How PALM works.** (a) A dated article is turned into a signal in one forward pass, by contrasting upward against downward continuations of the prompt, and the signals are ranked within a date. (b) The pretrained weights stay frozen; a rank-*r* adapter is fitted with the language-modeling loss on the text published between the checkpoint's cutoff *t<sub>c</sub>* and the decision date *t<sub>d</sub>*, and nothing after it.
+
+<p align="center">
+  <img src="assets/framework.png" width="100%" alt="PALM: signal extraction by contrasting up and down continuations, and point-in-time adaptation of a frozen model with a rank-r adapter on text before the decision date">
 </p>
 
 **What the paper finds**, on 44 vintages of ChronoGPT, ChronoGPT-Instruct and DatedGPT scored on one fixed evaluation window (next session, open to close):
@@ -17,6 +23,10 @@ Point-in-time language models are pretrained only on text published before a doc
 * **A newer checkpoint is not detectably better.** The IC of the released checkpoints shows no decay with age: slope +0.088 × 10⁻³ per year, 90% interval [−0.140, +0.321].
 * **A small adapter does the work of the run.** PALM raises the pooled IC from 1.63 to 3.40 × 10⁻³ (+1.77, 95% interval [−0.15, +3.71]) and improves 41 of the 44 checkpoints.
 * **The gain is domain, not recency.** Text from *before* the cutoff gains as much as the text the vintage is missing, so the point-in-time constraint comes without a detectable cost.
+
+<p align="center">
+  <img src="assets/ws_main.png" width="92%" alt="PALM improves 41 of 44 checkpoints; the IC of the released checkpoints shows no detectable decay with staleness">
+</p>
 
 An adapted checkpoint reads nothing from the evaluation window, so it stays eligible wherever the original one was.
 
