@@ -67,4 +67,5 @@ for x in ax:
 fig.tight_layout()
 out = os.path.join(FIGS, "ws_main.pdf")
 fig.savefig(out, bbox_inches="tight", pad_inches=0)
-print("wrote", out, MAIN, BASE, len(ms))
+fig.savefig(out[:-4] + ".png", bbox_inches="tight", pad_inches=0.05, dpi=220)
+print("wrote", out, "and .png", MAIN, BASE, len(ms))
